@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "77445067072",
+    "project_id": "virtual-queue-system-11f90",
+    "storage_bucket": "virtual-queue-system-11f90.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:77445067072:android:61a94449f61372a5548aa5",
+        "android_client_info": {
+          "package_name": "com.example.virtualqueue"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATkaia60fi3PYCRk--InNvVeD4aT9eXD0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
