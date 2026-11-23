@@ -1,3 +1,4 @@
+
 package com.example.virtualqueue
 
 import androidx.compose.foundation.background
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -26,9 +28,7 @@ fun AuthScreen(
     onLogin: (String, String) -> Unit,
     onRegister: (String, String, String, String) -> Unit,
     startAsRegister: Boolean = false
-
 ) {
-
     var isLogin by remember { mutableStateOf(!startAsRegister) }
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -36,101 +36,199 @@ fun AuthScreen(
     var showPassword by remember { mutableStateOf(false) }
     var isStaff by remember { mutableStateOf(false) }
     var staffCode by remember { mutableStateOf("") }
+
     val fieldShape = RoundedCornerShape(14.dp)
 
     Column(
-        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).imePadding()
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding()
     ) {
         // Gradient header
         Box(
-            Modifier.fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
                 .background(
                     Brush.linearGradient(listOf(BrandStart, BrandEnd)),
-                    RoundedCornerShape(bottomStart = 36.dp, bottomEnd = 36.dp)
+                    RoundedCornerShape(
+                        bottomStart = 36.dp,
+                        bottomEnd = 36.dp
+                    )
                 )
                 .statusBarsPadding()
                 .padding(horizontal = 28.dp, vertical = 44.dp)
         ) {
             Column {
                 Box(
-                    Modifier.size(64.dp).background(Color.White.copy(alpha = 0.2f), CircleShape),
+                    Modifier
+                        .size(64.dp)
+                        .background(
+                            Color.White.copy(alpha = 0.2f),
+                            CircleShape
+                        ),
                     contentAlignment = Alignment.Center
-                ) { Text("⏱", fontSize = 30.sp) }
+                ) {
+                    Text("⏱", fontSize = 30.sp)
+                }
+
                 Spacer(Modifier.height(16.dp))
-                Text("WELCOME", color = Color.White,
-                    style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold)
-                Text("Thank you for choosing virtual queue, osatopa pa line.",
+
+                Text(
+                    "WELCOME",
+                    color = Color.White,
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    "Thank you for choosing virtual queue, osatopa pa line.",
                     color = Color.White.copy(alpha = 0.85f),
-                    style = MaterialTheme.typography.bodyLarge)
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
 
-        Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        Column(
+            Modifier.padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
             Text(
                 if (isLogin) "Welcome back" else "Create your account",
-                style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
             )
 
             if (!isLogin) {
                 OutlinedTextField(
-                    name, { name = it }, label = { Text("Full name") },
-                    singleLine = true, shape = fieldShape, modifier = Modifier.fillMaxWidth()
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Full name") },
+                    singleLine = true,
+                    shape = fieldShape,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
+
+            // Email field
             OutlinedTextField(
-                email, { email = it }, label = { Text("Email") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true, shape = fieldShape, modifier = Modifier.fillMaxWidth()
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email
+                ),
+                singleLine = true,
+                shape = fieldShape,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("emailField")
             )
+
+            // Password field
             OutlinedTextField(
-                password, { password = it }, label = { Text("Password") },
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
                 trailingIcon = {
-                    TextButton(onClick = { showPassword = !showPassword }) {
+                    TextButton(
+                        onClick = { showPassword = !showPassword }
+                    ) {
                         Text(if (showPassword) "Hide" else "Show")
                     }
                 },
-                visualTransformation =
-                    if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                singleLine = true, shape = fieldShape, modifier = Modifier.fillMaxWidth()
+                visualTransformation = if (showPassword) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password
+                ),
+                singleLine = true,
+                shape = fieldShape,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("passwordField")
             )
 
             if (!isLogin) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = isStaff, onCheckedChange = { isStaff = it })
+                    Checkbox(
+                        checked = isStaff,
+                        onCheckedChange = { isStaff = it }
+                    )
                     Text("I'm a staff member")
                 }
+
                 if (isStaff) {
                     OutlinedTextField(
-                        staffCode, { staffCode = it }, label = { Text("Staff access code") },
-                        singleLine = true, shape = fieldShape, modifier = Modifier.fillMaxWidth()
+                        value = staffCode,
+                        onValueChange = { staffCode = it },
+                        label = { Text("Staff access code") },
+                        singleLine = true,
+                        shape = fieldShape,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
 
             state.error?.let {
-                Text(it, color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    it,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
 
             Button(
                 onClick = {
-                    if (isLogin) onLogin(email, password)
-                    else onRegister(name, email, password, if (isStaff) staffCode else "")
+                    if (isLogin) {
+                        onLogin(email, password)
+                    } else {
+                        onRegister(
+                            name,
+                            email,
+                            password,
+                            if (isStaff) staffCode else ""
+                        )
+                    }
                 },
                 enabled = !state.loading,
                 shape = fieldShape,
-                colors = ButtonDefaults.buttonColors(containerColor = BrandStart, contentColor = Color.White),
-                modifier = Modifier.fillMaxWidth().height(52.dp)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = BrandStart,
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
             ) {
-                if (state.loading) CircularProgressIndicator(
-                    Modifier.size(22.dp), strokeWidth = 2.dp, color = Color.White
-                ) else Text(if (isLogin) "Login" else "Register",
-                    style = MaterialTheme.typography.titleMedium)
+                if (state.loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(22.dp),
+                        strokeWidth = 2.dp,
+                        color = Color.White
+                    )
+                } else {
+                    Text(
+                        if (isLogin) "Login" else "Register",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
 
-            TextButton(onClick = { isLogin = !isLogin }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text(if (isLogin) "No account? Register" else "Have an account? Login")
+            TextButton(
+                onClick = { isLogin = !isLogin },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(
+                    if (isLogin) {
+                        "No account? Register"
+                    } else {
+                        "Have an account? Login"
+                    }
+                )
             }
         }
     }

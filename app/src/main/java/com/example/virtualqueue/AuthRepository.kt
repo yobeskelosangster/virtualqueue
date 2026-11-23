@@ -9,22 +9,52 @@ class AuthRepository {
     private val db = FirebaseFirestore.getInstance()
 
     companion object {
-        const val STAFF_CODE = "QUEUE2026"   // change this to your own secret
+        const val STAFF_CODE = "QUEUE2026"
     }
 
-    suspend fun register(name: String, email: String, password: String, staffCode: String): Result<AppUser> = try {
-        if (staffCode.isNotBlank() && staffCode != STAFF_CODE) {
-            throw Exception("Wrong staff access code")
+
+
+    suspend fun register(
+        name: String,
+        email: String,
+        password: String,
+        staffCode: String
+    ): Result<AppUser> {
+        return try {
+            if (staffCode.isNotBlank() && staffCode != STAFF_CODE) {
+                throw Exception("Wrong staff access code")
+            }
+
+            val role = if (staffCode.isNotBlank()) "staff" else "customer"
+
+            //  This is firebase auth account-creation
+            val authResult = auth.createUserWithEmailAndPassword(
+                email,
+                password
+            ).await()
+
+            val firebaseUser = authResult.user
+                ?: throw Exception("Account creation failed")
+
+            val uid = firebaseUser.uid
+
+            // user profile---creation
+            val user = AppUser(uid, name, email, role)
+
+            db.collection("users")
+                .document(uid)
+                .set(user)
+                .await()
+
+            Result.success(user)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
         }
-        val role = if (staffCode.isNotBlank()) "staff" else "customer"
-        val result = auth.createUserWithEmailAndPassword(email, password).await()
-        val uid = result.user!!.uid
-        val user = AppUser(uid, name, email, role)
-        db.collection("users").document(uid).set(user).await()
-        Result.success(user)
-    } catch (e: Exception) {
-        Result.failure(e)
     }
+
+
 
     suspend fun login(email: String, password: String): Result<AppUser> = try {
         val result = auth.signInWithEmailAndPassword(email, password).await()

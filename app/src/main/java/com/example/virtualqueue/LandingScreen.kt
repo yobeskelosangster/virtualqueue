@@ -67,7 +67,7 @@ fun LandingScreen(onGetStarted: () -> Unit, onLogin: () -> Unit) {
         ) {
             Text("Why Virtual Queue?", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             FeatureCard("📱", "Join From Anywhere", "Use your phone. No need to stand in a physical line.")
-            FeatureCard("📍", "Live position and wait time", "See how many people are ahead of you and roughly how long it will take.")
+            FeatureCard("", "Live position and wait time", "See how many people are ahead of you and roughly how long it will take.")
             FeatureCard("🔔", "Get notified", "Use other apps while you wait. We alert you when you're close and when it's your turn.")
             FeatureCard("💬", "Message the staff", "Staff can send you a message, and you can reply right from the app.")
 
@@ -79,12 +79,7 @@ fun LandingScreen(onGetStarted: () -> Unit, onLogin: () -> Unit) {
             Step("4", "Walk up when called", "Go to the counter when it's your turn.")
 
             Spacer(Modifier.height(12.dp))
-            Button(
-                onClick = onGetStarted,
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = BrandStart, contentColor = Color.White),
-                modifier = Modifier.fillMaxWidth().height(52.dp)
-            ) { Text("Get started", style = MaterialTheme.typography.titleMedium) }
+
             Spacer(Modifier.navigationBarsPadding())
         }
     }

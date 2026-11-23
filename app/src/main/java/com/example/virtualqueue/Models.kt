@@ -11,6 +11,7 @@ data class QueueInfo(
     val avgServiceMinutes: Long = 5
 )
 
+
 data class Ticket(
     @DocumentId val id: String = "",
     val queueId: String = "",
@@ -18,9 +19,11 @@ data class Ticket(
     val number: Long = 0,
     val userId: String = "",
     val userName: String = "",
-    val status: String = "waiting",   // waiting, called, served, skipped, cancelled
-    val joinedAt: Long = 0
+    val status: String = "waiting", // waiting, called, served, skipped, cancelled
+    val joinedAt: Long = 0,
+    val calledAt: Long = 0
 )
+
 
 data class Message(
     @DocumentId val id: String = "",

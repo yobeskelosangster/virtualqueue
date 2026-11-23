@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
 
-// ---------- Shared building blocks ----------
 
 @Composable
 private fun GradientHeader(title: String, subtitle: String, onLogout: () -> Unit) {
@@ -105,7 +104,6 @@ private fun EmptyState(emoji: String, text: String) {
     }
 }
 
-// ---------- Waiting screen (position circle) ----------
 
 @Composable
 private fun WaitingCard(
@@ -167,8 +165,6 @@ private fun WaitingCard(
     }
 }
 
-// ---------- Customer ----------
-
 @Composable
 fun CustomerScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
     val queues by vm.queues.collectAsState()
@@ -184,7 +180,7 @@ fun CustomerScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) {
-        pendingQueue?.let { vm.join(it, user) }
+        pendingQueue?.let { vm.join(context, it, user) }
         pendingQueue = null
     }
 
@@ -204,7 +200,6 @@ fun CustomerScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
         }
     }
 
-    // "You're close" alerts (position 3 or better)
     LaunchedEffect(ticket?.id, ticket?.status, ahead) {
         val t = ticket
         if (t != null && t.status == "waiting") {
@@ -216,8 +211,6 @@ fun CustomerScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
             }
         }
     }
-
-    // New message from staff
     LaunchedEffect(myMessages.size) {
         val last = myMessages.lastOrNull()
         if (last != null && last.fromStaff && last.sentAt > startTime) {
@@ -225,7 +218,6 @@ fun CustomerScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
         }
     }
 
-    // Ask for notification permission before joining
     if (pendingQueue != null) {
         AlertDialog(
             onDismissRequest = { pendingQueue = null },
@@ -242,7 +234,7 @@ fun CustomerScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
             },
             dismissButton = {
                 TextButton(onClick = {
-                    pendingQueue?.let { vm.join(it, user) }
+                    pendingQueue?.let { vm.join(context, it, user) }
                     pendingQueue = null
                 }) { Text("Join without alerts") }
             }
@@ -292,7 +284,6 @@ fun CustomerScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
                     }
                 }
 
-                // Messages with staff
                 item {
                     Card(Modifier.fillMaxWidth(), colors = cardColors()) {
                         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -326,7 +317,7 @@ fun CustomerScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
                             Button(
                                 onClick = {
                                     if (needsNotificationPermission()) pendingQueue = q
-                                    else vm.join(q, user)
+                                    else vm.join(context, q, user)
                                 },
                                 shape = RoundedCornerShape(12.dp),
                                 colors = ButtonDefaults.buttonColors(
@@ -341,7 +332,6 @@ fun CustomerScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
     }
 }
 
-// ---------- Staff / Admin ----------
 
 @Composable
 fun StaffScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
@@ -394,7 +384,6 @@ fun StaffScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
                 }
             }
 
-            // Queue list
             item {
                 Text("Your queues", style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold)
@@ -425,7 +414,6 @@ fun StaffScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
                 }
             }
 
-            // Manage selected queue
             if (selected != null) {
                 item {
                     Card(Modifier.fillMaxWidth(), colors = cardColors()) {
@@ -466,8 +454,6 @@ fun StaffScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
                         }
                     }
                 }
-
-                // Open chat
                 if (chatTicket != null) {
                     item {
                         Card(Modifier.fillMaxWidth(), colors = cardColors()) {
@@ -486,8 +472,6 @@ fun StaffScreen(user: AppUser, vm: QueueViewModel, onLogout: () -> Unit) {
                         }
                     }
                 }
-
-                // People in the queue
                 item {
                     Text("People in this queue", style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold)

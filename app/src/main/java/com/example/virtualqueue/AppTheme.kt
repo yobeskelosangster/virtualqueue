@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-val BrandStart = Color(0xFF0F766E)   // teal
-val BrandEnd = Color(0xFF4F46E5)     // indigo
+val BrandStart = Color(0xFF0F766E)
+val BrandEnd = Color(0xFF4F46E5)
 
 private val LightColors = lightColorScheme(
     primary = BrandStart,
